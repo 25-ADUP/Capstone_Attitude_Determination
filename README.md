@@ -9,7 +9,7 @@ Team 25, Attitude Determination Using Priors **(ADUP)**
  
 | **Member**         | **Project Specialty**        | **Major**                |
 |--------------------|------------------------------|--------------------------|
-| **Tori Royal**     | Software/Image Interpolation | *Electrical Engineering* |
+| **Tori Royal**     | Software/Image Segmentation  | *Electrical Engineering* |
 | **Sierra MacLeod** | Software                     | *Computer Engineering*   |
 | **Steven Kaiser**  | Software/Mathematics         | *Electrical Engineering* |
 | **Randy Young**    | Asset Generation/Simulation  | *Computer Engineering*   |
