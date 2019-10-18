@@ -4,8 +4,7 @@ This is our general repository for all capstone-related code and resources.
 ## About Us
 ### Who are we?
 
-Team 25, Attitude Determination Using Priors **(ADUP)**
-
+Team 25, Attitude Determination Using Priors **(ADUP)**  
 *Montana State University 2019 Capstone*
  
 | **Member**         | **Project Specialty**        | **Major**                |
@@ -17,12 +16,10 @@ Team 25, Attitude Determination Using Priors **(ADUP)**
     
 ### What are we doing?
 
-**Our Problem:**
-
+**Our Problem:**  
 Attitude determination is a critical component in the fields of security and defense to monitor the behavior of potentially malicious vehicles in motion. However, most typical approaches may take a substantial amount of time and struggle in non-ideal conditions of poor image resolution and bad lighting. By making use of a well-defined model to mathematically understand possible positions prior to analyzing a monocular video of the specified model in motion, it is possible to cut down on processing time and increase algorithm robustness.
 
-**Our Goals:**
-
+**Our Goals:**  
 Given the 3D model of a vehicle and a monocular video of it in motion, the relative attitude of the vehicle in space will be determined.
 
 An algorithm will be developed to:
