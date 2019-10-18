@@ -30,3 +30,4 @@ An algorithm will be developed to:
 
 Once the algorithm is developed, its capability to determine the vehicle’s attitude in a variety of conditions will be assessed.
 
+![ADUP Block Diagram](resources/images/block_diagram_2018-10-08.png)
