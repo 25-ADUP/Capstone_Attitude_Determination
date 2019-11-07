@@ -1,4 +1,4 @@
-function [im_in] = read_single_image(filename, filetype)
+function [im_in, im_in_og] = read_single_image(filename, filetype)
     % interpolation not necessary bc introducing error
     % when downsampling, need to consider ailiasing
     % imresize adds a filter which should help combat that
@@ -23,15 +23,15 @@ function [im_in] = read_single_image(filename, filetype)
 
     elseif x_og > image_size && y_og > image_size
         disp("Input image is too large, downsampling to " +  image_size + "x" + image_size);
-        im_in = downsample(downsample(Im', 2)', 2); % Downsample input image
+        im_in = downsample(downsample(im_in_og', 2)', 2); % Downsample input image
 
     elseif x_og > image_size
         disp("Input image X dimension is too large, downsampling to " +  image_size + "x" + y_og);
-        im_in = downsample(Im, 2); % Downsample input image in X dimension
+        im_in = downsample(im_in_og, 2); % Downsample input image in X dimension
 
     elseif y_og > image_size
         disp("Input image Y dimension is too large, downsampling to " +  x_og + "x" + image_size);
-        im_in = downsample(Im', 2); % Downsample input image in Y dimension
+        im_in = downsample(im_in_og', 2); % Downsample input image in Y dimension
 
     else
         im_in = im_in_og;
