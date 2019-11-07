@@ -20,4 +20,14 @@
 % | OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % | SOFTWARE.
 % |===============================================================================
-%
+% |
+% | Module: Difference
+% |
+% | Description:
+% | Function `difference` takes two image masks
+% | and returns an inner product calculation for
+% | input comparison
+
+function [score] = difference(model_mask, input_mask)
+    score = sum(model_mask .* input_mask, 'all');
+end
