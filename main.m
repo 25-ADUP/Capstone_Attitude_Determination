@@ -11,11 +11,19 @@ filetype = "png";
 [num_frames, vid_frames] = get_video_frames("sqwad.MOV"); % current test video is a random vid of tori
 masked = mask(num_frames, vid_frames)
 A = randi([1 num_frames],1,3); % this gets 3 random frames of the video and displays them
-imshow(masked{A(1)}); figure
-imshow(masked{A(2)}); figure
-imshow(masked{A(3)}); figure
 
+mask_1 = masked{A(1)};
+mask_2 = masked{A(2)};
+mask_3 = masked{A(3)};
+imshow(mask_1); figure
+imshow(mask_2); figure
+imshow(mask_3); figure
 
+diff_1_1 = difference(mask_1, mask_1)
+diff_2_2 = difference(mask_2, mask_2)
+diff_3_3 = difference(mask_3, mask_3)
+diff_1_2 = difference(mask_1, mask_2)
+diff_2_3 = difference(mask_2, mask_3)
 
 
 % video = {image_fit(imread('triangle_test.png')), image_fit(imread('suplex.png'))};
