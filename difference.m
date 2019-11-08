@@ -29,5 +29,6 @@
 % | input comparison
 
 function [score] = difference(model_mask, input_mask)
-    score = sum(model_mask .* input_mask, 'all');
+%     score = sum(model_mask .* input_mask, 'all');
+    score = model_mask(:)'*input_mask(:);
 end
