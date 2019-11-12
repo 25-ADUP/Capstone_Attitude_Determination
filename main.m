@@ -19,11 +19,11 @@ imshow(mask_1); figure
 imshow(mask_2); figure
 imshow(mask_3); figure
 
-diff_1_1 = difference(mask_1, mask_1)
-diff_2_2 = difference(mask_2, mask_2)
-diff_3_3 = difference(mask_3, mask_3)
-diff_1_2 = difference(mask_1, mask_2)
-diff_2_3 = difference(mask_2, mask_3)
+diff_1_1 = compare(mask_1, mask_1)
+diff_2_2 = compare(mask_2, mask_2)
+diff_3_3 = compare(mask_3, mask_3)
+diff_1_2 = compare(mask_1, mask_2)
+diff_2_3 = compare(mask_2, mask_3)
 
 
 % video = {image_fit(imread('triangle_test.png')), image_fit(imread('suplex.png'))};

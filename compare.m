@@ -21,14 +21,24 @@
 % | SOFTWARE.
 % |===============================================================================
 % |
-% | Module: Difference
+% | Module: Compare
 % |
 % | Description:
-% | Function `difference` takes two image masks
+% | Function `compare` takes two image mask cells
 % | and returns an inner product calculation for
 % | input comparison
 
-function [score] = difference(model_mask, input_mask)
-%     score = sum(model_mask .* input_mask, 'all');
-    score = model_mask(:)'*input_mask(:);
+function [scores] = compare(model_masks, input_masks)
+    %score = model_masks(:)'*input_mask(:);
+    scores = cellfun(@(input) max_index(diff(model_masks, input)), input_masks);
+    % also try
+    % score = sum(xor(model_mask, input_mask));
+end
+
+function [score] = diff(model_masks, input_mask)
+    score = cellfun(@(mask) mask(:)'*input_mask(:), model_masks);
+end
+
+function [index] = max_index(a)
+    [~, index] = max(a);
 end
