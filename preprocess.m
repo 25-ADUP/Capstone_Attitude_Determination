@@ -13,6 +13,6 @@ tic
 
 [num_lib_frames, lib_frames, frame_rate] = create_library_frames(config.VIDEO_FILE, config.LIB_SUBSET_SIZE); % Create library frames from input animation
 [lib_contour] = calc_contour_gauss(num_lib_frames, lib_frames, config.FILTER_WIDTH); % Get contour of library frames
-[num_frames, vid_frames] = create_input_frames(config.VIDEO_FILE); % Create input frames from input animation
+[num_frames, vid_frames] = create_input_frames(config.VIDEO_FILE, config.SIGMA); % Create input frames from input animation
 
 toc % Display code runtime

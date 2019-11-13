@@ -26,10 +26,11 @@ for frame = 1:num_priors    % iterate through priors
     
     % Declare Gauss filter
     % Note: second input modifies the width of filter
-    gauss = fspecial('gaussian', filter_width, 1);
+%     gauss = fspecial('gaussian', filter_width, 1);
     
     % Convolve frame_contour with gauss filter to 'widen' our contour
-    lib_contour{frame} = convn((convn(frame_contour', gauss, 'same'))', gauss, 'same');
+%     lib_contour{frame} = convn((convn(frame_contour', gauss, 'same'))', gauss, 'same');
+    lib_contour{frame} = imgaussfilt(frame_contour, filter_width);
     
 end
 
