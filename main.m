@@ -8,7 +8,7 @@ filetype = "png";
 
 % [z, og] = read_single_image(filename, filetype);
 
-[num_frames, vid_frames] = get_video_frames("Cone1Animation.avi"); % current test video is a random vid of tori
+[num_frames, vid_frames] = get_video_frames("Cone1Animation.mp4"); % current test video is a random vid of tori
 masked = mask(num_frames, vid_frames)
 A = randi([1 num_frames],1,3); % this gets 3 random frames of the video and displays them
 
