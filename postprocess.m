@@ -4,11 +4,13 @@
 % data. Data is visualized here.
 %
 %
+addpath(genpath('YAMLMatlab/'));
+config = ReadYaml('config.yaml');
 tic
 
 generate_heatmap(num_lib_frames, num_frames, lib_contour, vid_contour)
 
-output_vid = VideoWriter('Reconstruced Video'); % Attidude Determination video for Cone1 Animation
+output_vid = VideoWriter(config.OUTPUT_FILE); % Attidude Determination video for Cone1 Animation
 open(output_vid);
 
 for i = 1:num_frames
