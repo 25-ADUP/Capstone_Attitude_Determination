@@ -1,4 +1,4 @@
 FILTER_WIDTH: 3
 LIB_SUBSET_SIZE: 1
 VIDEO_FILE: "media/Cone1Animation.mp4"
-OUTPUT_FILE: "media/Reconstructed Video"
+OUTPUT_FILE: "output/Reconstructed Video"
