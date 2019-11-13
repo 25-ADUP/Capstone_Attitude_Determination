@@ -1,6 +1,6 @@
 % Code to create library for Cone1t
-function [num_lib_frames, lib_frames] = create_library_frames(vid_file, subset_num)
-    [num_frames, vid_frames] = get_video_frames(vid_file);
+function [num_lib_frames, lib_frames, frame_rate] = create_library_frames(vid_file, subset_num)
+    [num_frames, vid_frames, frame_rate] = get_video_frames(vid_file);
     
     num_lib_frames = int16(num_frames/subset_num);
     lib_frames = {num_lib_frames};
