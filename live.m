@@ -6,7 +6,7 @@
 
 tic
 
-[vid_contour] = mask_v2(num_frames, vid_frames); % Get contour of input frames
+[vid_contour] = calc_contour(num_frames, vid_frames); % Get contour of input frames
 
 scores = compare(lib_contour, vid_contour); % Scores is 1xnum_frames list of lib_frame indicies best corresponding to frame
 
