@@ -6,7 +6,7 @@
 % Function takes number of priors and a cell containing the priors. 
 % Function returns a cell
 
-function [lib_contour] = calc_contour_gauss(num_priors, lib_in) % interate through each prior & perform mask
+function [lib_contour] = calc_contour_gauss(num_priors, lib_in, filter_width) % interate through each prior & perform mask
 
 for frame = 1:num_priors    % iterate through priors
     
@@ -26,7 +26,7 @@ for frame = 1:num_priors    % iterate through priors
     
     % Declare Gauss filter
     % Note: second input modifies the width of filter
-    gauss = fspecial('gaussian', 3, 1);
+    gauss = fspecial('gaussian', filter_width, 1);
     
     % Convolve frame_contour with gauss filter to 'widen' our contour
     lib_contour{frame} = convn((convn(frame_contour', gauss, 'same'))', gauss, 'same');
