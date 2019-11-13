@@ -21,7 +21,7 @@ imshow(lib_contour{1}); title("Contour of first library frame WITH Gauss"); figu
 
 % Create input video frames from input animation, adds Gaussian noise
 [num_frames, vid_frames] = create_input_frames('Cone1Animation.mp4');
-imshow(vid_frames{1}); title("First input frame with added noise");
+imshow(vid_frames{1}); title("First input frame with added noise"); figure;
 
 % Get contour of input frames, no need for Gaussian filter here!
 [vid_contour] = calc_contour(num_frames, vid_frames);
