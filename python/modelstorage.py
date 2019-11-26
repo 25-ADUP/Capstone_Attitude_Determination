@@ -1,4 +1,5 @@
 import sqlite3
+import io
 
 
 class ModelStorage:
@@ -25,7 +26,7 @@ class ModelStorage:
             """
         )
 
-    def insert(self, theta, psi, phi, imagefile):
+    def insert(self, theta, psi, phi, imagefile: io.BytesIO):
         """
         Insert an angle mask
         :param theta: angle corresponding to X
@@ -33,7 +34,8 @@ class ModelStorage:
         :param phi: angle corresponding to Z
         :param imagefile: file-like object with png image
         """
-        self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, imagefile.read()))
+        self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, sqlite3.Binary(imagefile.getvalue())))
+        self.connection.commit()
 
     def request(self, theta=None, psi=None, phi=None) -> list:
         """
