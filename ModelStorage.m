@@ -28,27 +28,39 @@
 
 classdef ModelStorage
     properties
-        conn
+        conn,
+        db_zip
     end
-    methods
+    properties (Hidden)
+        cleanup
+    end
+    methods ( Access = 'public' )
         function obj = ModelStorage(database_zip)
             % db = ModelStorage(database_zip)
             % 
             % Assumes model zip file is in ./model
             % Example: db = ModelStorage('priors.zip')
-            try
-                rmdir('./working_model', 's');  % clear any past data
-            catch E
-            end
-            % make new dir
+            
+            obj.db_zip = database_zip;
+            
+            disp('Loading model...');
+            
+            % Make new dir
             mkdir('working_model');
+            mkdir('./working_model/contours'); % Make sure contours dir exists
             
-            % set up working dir, not intended for git
+            % Set up working dir, not intended for git
             unzip(sprintf('./model/%s', database_zip), './working_model');
+            disp('Set up working model.');
             
+            % Connect to database
             obj.conn = sqlite('./working_model/priors.db');
+            disp('Connected to database.');
+            
+            % Enable destructor. matlab, why is this not default? please
+            obj.cleanup = onCleanup(@()delete(obj));
         end
-        function masks = fetch_masks(obj, theta, psi, phi)
+        function masks = fetch_masks(obj, varargin)
             % Fetch masks with given angles
             % 
             % masks = fetch_masks(theta)
@@ -57,31 +69,7 @@ classdef ModelStorage
             % 
             % Use empty string to exclude angles:
             % masks = fetch_masks('', psi, phi)
-            if ~exist('theta', 'var')
-                error('Please pass at least one argument.');
-            end
-
-            params = {};
-
-            % Add each param if it exists
-            if ~strcmp(theta, '')
-                params{end+1} = sprintf('theta=%d', theta);
-            end
-
-            if exist('psi', 'var') && ~strcmp(psi, '')
-                params{end+1} = sprintf('psi=%d', psi);
-            end
-
-            if exist('phi', 'var') && ~strcmp(phi, '')
-                params{end+1} = sprintf('phi=%d', phi);
-            end
-
-            % Build query
-            if isempty(params)
-                query = 'select image from angles';
-            else
-                query = sprintf('select image from angles where %s', join(string(params), ' and '));
-            end
+            query = obj.build_query('image', varargin{:});
                 
             % Fetch query. Returns Nx1 cell of model filenames,
             % without a folder path. Example: "M0_0_0.png"
@@ -91,9 +79,99 @@ classdef ModelStorage
             masks = cellfun(@(mask_fp) imread(sprintf('./working_model/masks/%s', mask_fp)), found_masks', 'UniformOutput', false);
             
         end
-        function delete(obj)
+        function contours = fetch_contours(obj, varargin)
+            % Fetch contours with given angles
+            % 
+            % contours = fetch_contours(theta)
+            % contours = fetch_contours(theta, psi)
+            % contours = fetch_contours(theta, psi, phi)
+            % 
+            % Use empty string to exclude angles:
+            % contours = fetch_contours('', psi, phi)
+            query = obj.build_query('contour', varargin{:});
+            
+            % Fetch query. Returns Nx1 cell of model filenames,
+            % without a folder path. Example: "M0_0_0.png"
+            found_masks = fetch(obj.conn, query);
+            
+            % Map filenames to imread function on transposed cell
+            contours = cellfun(@(mask_fp) imread(sprintf('./working_model/contours/%s', mask_fp)), found_masks', 'UniformOutput', false);
+        end
+        function [] = insert_contour(obj, theta, psi, phi, contour_image)
+            % insert_contour(theta, psi, phi, contour_image);
+            % Updates a single row with the contour and saves image to
+            % model
+            
+            % Build filename
+            filename = sprintf('C%d_%d_%d.png', theta, psi, phi);
+            
+            % Write image to file
+            imwrite(contour_image, sprintf('./working_model/contours/%s', filename));
+            
+            % Update contour with filename
+            update(obj.conn, ...
+                   'angles', ...
+                   {'contour'}, ...
+                   {filename}, ...
+                   sprintf('where theta=%d and psi=%d and phi=%d', theta, psi, phi));
+            
+            % Save
+            commit(obj.conn);
+        end
+    end
+    methods ( Static, Access = 'public')
+        function query = build_query(column_name, varargin)
+            % query = build_query(column, theta, psi, phi)
+            % varargin assumed to hold {theta, psi, phi} or fewer
+            if nargin < 1
+                error('Please pass at least one argument.');
+            end
+
+            params = {};
+
+            % Add each param if it exists
+            
+            % Theta
+            if ~strcmp(varargin{1}, '')
+                params{end+1} = sprintf('theta=%d', varargin{1});
+            end
+
+            % Psi
+            if length(varargin) > 1 && ~strcmp(varargin{2}, '')
+                params{end+1} = sprintf('psi=%d', varargin{2});
+            end
+
+            % Phi
+            if length(varargin) > 2 && ~strcmp(varargin{3}, '')
+                params{end+1} = sprintf('phi=%d', varargin{3});
+            end
+
+            % Build query
+            if isempty(params)
+                query = sprintf('select %s from angles', column_name);
+            else
+                query = sprintf('select %s from angles where %s', column_name, join(string(params), ' and '));
+            end
+        end
+    end
+    methods ( Access = 'private')
+        function obj = delete(obj)
             % Class destructor
+            
+            disp('Saving model...');
+            
+            % Close database
             close(obj.conn);
+            disp('Closed connection.');
+            
+            % Zip it up all pretty
+            zip(sprintf('./model/%s', obj.db_zip), './working_model/*');
+            disp('Saved as zip.');
+            
+            try
+                rmdir('./working_model', 's');  % Remove working model
+            catch E
+            end
         end
     end
 end
