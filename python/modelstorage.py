@@ -47,13 +47,15 @@ class ModelStorage:
         if drop_old:
             self.cursor.execute('drop table if exists angles')
 
+        # this module plans for contours but does not add them
         self.cursor.execute(
             """
             create table if not exists angles (
                 theta real not null,
                 psi real not null,
                 phi real not null,
-                image {},
+                image {0},
+                contour {0},
                 primary key (theta, psi, phi)
             );
             """.format('blob' if use_blobs else 'text')
