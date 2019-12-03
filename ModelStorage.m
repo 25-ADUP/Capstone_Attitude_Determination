@@ -165,7 +165,7 @@ classdef ModelStorage
             disp('Closed connection.');
             
             % Zip it up all pretty
-            zip(sprintf('./model/%s', obj.db_zip), './working_model/*');
+            zip(sprintf('./model/%s', obj.db_zip), {'masks', 'contours', 'priors.db'}, './working_model');
             disp('Saved as zip.');
             
             try
