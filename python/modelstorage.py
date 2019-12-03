@@ -1,13 +1,16 @@
 import sqlite3
 import io
+from typing import Union
 
 
 class ModelStorage:
-    def __init__(self, drop_old=False):
+    def __init__(self, drop_old=False, use_blobs=True):
         """
         Initialize the DB.
         :param drop_old: Set to True if making new DB
         """
+        self.use_blobs = use_blobs
+
         self.connection = sqlite3.connect('priors.db')
         self.cursor = self.connection.cursor()
         print('Database connected.')
@@ -21,20 +24,24 @@ class ModelStorage:
                 theta real not null,
                 psi real not null,
                 phi real not null,
-                image blob
+                image {},
+                primary key (theta, psi, phi)
             );
-            """
+            """.format('blob' if use_blobs else 'text')
         )
 
-    def insert(self, theta, psi, phi, imagefile: io.BytesIO):
+    def insert(self, theta, psi, phi, imagefile: Union[str, io.BytesIO]):
         """
         Insert an angle mask
         :param theta: angle corresponding to X
         :param psi: angle corresponding to Y
         :param phi: angle corresponding to Z
-        :param imagefile: file-like object with png image
+        :param imagefile: str filename or file-like object with png image
         """
-        self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, sqlite3.Binary(imagefile.getvalue())))
+        if self.use_blobs:
+            self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, sqlite3.Binary(imagefile.getvalue())))
+        else:
+            self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, imagefile))
         self.connection.commit()
 
     def request(self, theta=None, psi=None, phi=None) -> list:
@@ -69,5 +76,5 @@ class ModelStorage:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         number = self.cursor.execute("SELECT COUNT(theta) FROM angles").fetchone()[0]
-        print('Database closing with {} angles'.format(number))
+        print('\nDatabase closing with {} angles'.format(number))
         self.save()

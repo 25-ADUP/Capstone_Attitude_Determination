@@ -4,3 +4,4 @@ IMAGE_SIZE: 512
 VIDEO_FILE: "media/Cone1Animation.mp4"
 OUTPUT_FILE: "output/Reconstructed Video"
 SIGMA: 40
+DATABASE_ZIP: "priors.zip"
