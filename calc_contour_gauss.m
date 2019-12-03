@@ -6,15 +6,13 @@
 % Function takes number of priors and a cell containing the priors. 
 % Function returns a cell
 
-function [lib_contour] = calc_contour_gauss(num_priors, lib_in, filter_width) % interate through each prior & perform mask
-
-for frame = 1:num_priors    % iterate through priors
+function [lib_contour] = calc_contour_gauss(lib_frame_in, filter_width) % interate through each prior & perform mask
     
     % Assign matricies for each color type
     % Note: had to typecase as double, otherwise throws error
-    R = double(lib_in{frame}(:, :, 1));
-    G = double(lib_in{frame}(:, :, 2));
-    B = double(lib_in{frame}(:, :, 3));
+    R = double(lib_frame_in(:, :, 1));
+    G = double(lib_frame_in(:, :, 2));
+    B = double(lib_frame_in(:, :, 3));
     
     % Take gradient of each segmented color matrix
     [Rx, Ry] = gradient(R);
@@ -30,8 +28,6 @@ for frame = 1:num_priors    % iterate through priors
     
     % Convolve frame_contour with gauss filter to 'widen' our contour
 %     lib_contour{frame} = convn((convn(frame_contour', gauss, 'same'))', gauss, 'same');
-    lib_contour{frame} = imgaussfilt(frame_contour, filter_width);
+    lib_contour = imgaussfilt(frame_contour, filter_width);
     
-end
-
 end
