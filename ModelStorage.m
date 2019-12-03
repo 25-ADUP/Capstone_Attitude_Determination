@@ -60,12 +60,12 @@ classdef ModelStorage
             % Enable destructor. matlab, why is this not default? please
             obj.cleanup = onCleanup(@()delete(obj));
         end
-        function masks = fetch_masks(obj, varargin)
-            % Fetch masks with given angles
+        function images = fetch_images(obj, varargin)
+            % Fetch images with given angles
             % 
-            % masks = fetch_masks(theta)
-            % masks = fetch_masks(theta, psi)
-            % masks = fetch_masks(theta, psi, phi)
+            % images = fetch_images(theta)
+            % images = fetch_images(theta, psi)
+            % images = fetch_images(theta, psi, phi)
             % 
             % Use empty string to exclude angles:
             % masks = fetch_masks('', psi, phi)
@@ -73,10 +73,13 @@ classdef ModelStorage
                 
             % Fetch query. Returns Nx1 cell of model filenames,
             % without a folder path. Example: "M0_0_0.png"
-            found_masks = fetch(obj.conn, query);
+            found = fetch(obj.conn, query);
             
             % Map filenames to imread function on transposed cell
-            masks = cellfun(@(mask_fp) imread(sprintf('./working_model/masks/%s', mask_fp)), found_masks', 'UniformOutput', false);
+            images = cellfun( ...
+                @(theta, psi, phi, image_fp) ModelImage(theta, psi, phi, imread(sprintf('./working_model/masks/%s', image_fp))), ...
+                found(:,1), found(:,2), found(:,3), found(:,4), ...
+                'UniformOutput', false);
             
         end
         function contours = fetch_contours(obj, varargin)
@@ -92,10 +95,13 @@ classdef ModelStorage
             
             % Fetch query. Returns Nx1 cell of model filenames,
             % without a folder path. Example: "M0_0_0.png"
-            found_masks = fetch(obj.conn, query);
+            found = fetch(obj.conn, query);
             
             % Map filenames to imread function on transposed cell
-            contours = cellfun(@(mask_fp) imread(sprintf('./working_model/contours/%s', mask_fp)), found_masks', 'UniformOutput', false);
+            contours = cellfun( ...
+                @(theta, psi, phi, contour_fp) ModelImage(theta, psi, phi, imread(sprintf('./working_model/masks/%s', contour_fp))), ...
+                found(:,1), found(:,2), found(:,3), found(:,4), ...
+                'UniformOutput', false);
         end
         function [] = insert_contour(obj, theta, psi, phi, contour_image)
             % insert_contour(theta, psi, phi, contour_image);
@@ -148,9 +154,9 @@ classdef ModelStorage
 
             % Build query
             if isempty(params)
-                query = sprintf('select %s from angles', column_name);
+                query = sprintf('select theta, psi, phi, %s from angles', column_name);
             else
-                query = sprintf('select %s from angles where %s', column_name, join(string(params), ' and '));
+                query = sprintf('select theta, psi, phi, %s from angles where %s', column_name, join(string(params), ' and '));
             end
         end
     end
