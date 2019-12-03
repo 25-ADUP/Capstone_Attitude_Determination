@@ -70,9 +70,11 @@ class ModelStorage:
         :param imagefile: str filename or file-like object with png image
         """
         if self.use_blobs:
-            self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, sqlite3.Binary(imagefile.getvalue())))
+            self.cursor.execute('insert into angles (theta, psi, phi, image) values (?,?,?,?)',
+                                (theta, psi, phi, sqlite3.Binary(imagefile.getvalue())))
         else:
-            self.cursor.execute('insert into angles values (?,?,?,?)', (theta, psi, phi, imagefile))
+            self.cursor.execute('insert into angles (theta, psi, phi, image) values (?,?,?,?)',
+                                (theta, psi, phi, imagefile))
         self.connection.commit()
 
     def request(self, theta=None, psi=None, phi=None) -> list:
