@@ -6,24 +6,20 @@
 % Function takes number of frames and a cell containing the frames. 
 % Function returns a cell
 
-function [video_contour] = calc_contour(num_frames, video_in)
+function [frame_contour] = fast_calc_contour(vid_frame_in)
 
-for frame = 1:num_frames    % iterate through video frames
-    
-    % Assign matricies for each color type
-    % Note: had to typecase as double, otherwise throws error
-    R = double(video_in{frame}(:, :, 1));
-    G = double(video_in{frame}(:, :, 2));
-    B = double(video_in{frame}(:, :, 3));
-    
-    % Take gradient of each segmented color matrix
-    [Rx, Ry] = gradient(R);
-    [Gx, Gy] = gradient(G);
-    [Bx, By] = gradient(B);
-    
-    % Combine each directional color gradient for final contour
-    video_contour{frame} = Rx.^2 + Ry.^2 + Gx.^2 + Gy.^2 + Bx.^2 + By.^2;
+% Assign matricies for each color type
+% Note: had to typecase as double, otherwise throws error
+R = double(vid_frame_in(:, :, 1));
+G = double(vid_frame_in(:, :, 2));
+B = double(vid_frame_in(:, :, 3));
 
-end
+% Take gradient of each segmented color matrix
+[Rx, Ry] = gradient(R);
+[Gx, Gy] = gradient(G);
+[Bx, By] = gradient(B);
+
+% Combine each directional color gradient for final contour
+frame_contour = Rx.^2 + Ry.^2 + Gx.^2 + Gy.^2 + Bx.^2 + By.^2;
 
 end
