@@ -77,8 +77,12 @@ classdef ModelStorage
             end
 
             % Build query
-            query = sprintf('select image from angles where %s', join(string(params), ' and '));
-
+            if isempty(params)
+                query = 'select image from angles';
+            else
+                query = sprintf('select image from angles where %s', join(string(params), ' and '));
+            end
+                
             % Fetch query. Returns Nx1 cell of model filenames,
             % without a folder path. Example: "M0_0_0.png"
             found_masks = fetch(obj.conn, query);
