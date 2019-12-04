@@ -59,7 +59,7 @@ classdef ModelStorage
             disp('Set up working model.');
             
             % Connect to database
-            obj.conn = sqlite('./working_model/priors.db');
+            obj.conn = database('SQLite', '', '');
             disp('Connected to database.');
             
             % Enable destructor. matlab, why is this not default? please
@@ -78,7 +78,7 @@ classdef ModelStorage
                 
             % Fetch query. Returns Nx1 cell of model filenames,
             % without a folder path. Example: "M0_0_0.png"
-            found = fetch(obj.conn, query);
+            found = table2cell(select(obj.conn, query));
             
             % Map filenames to imread function on transposed cell
             images = cellfun( ...
@@ -100,7 +100,7 @@ classdef ModelStorage
             
             % Fetch query. Returns Nx1 cell of model filenames,
             % without a folder path. Example: "M0_0_0.png"
-            found = fetch(obj.conn, query);
+            found = table2cell(select(obj.conn, query));
             
             % Map filenames to imread function on transposed cell
             contours = cellfun( ...
@@ -124,10 +124,9 @@ classdef ModelStorage
                    'angles', ...
                    {'contour'}, ...
                    {filename}, ...
-                   sprintf('where theta=%d and psi=%d and phi=%d', theta, psi, phi));
+                   {sprintf('where theta=%d and psi=%d and phi=%d', theta, psi, phi)});
             
-            % Save
-            commit(obj.conn);
+            % Auto-Commits
         end
     end
     methods ( Static, Access = 'public')
