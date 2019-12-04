@@ -41,6 +41,11 @@ classdef ModelStorage
             % Assumes model zip file is in ./model
             % Example: db = ModelStorage('priors.zip')
             
+            try
+                rmdir('./working_model', 's');  % Remove working model
+            catch E
+            end
+            
             obj.db_zip = database_zip;
             
             disp('Loading model...');
