@@ -6,7 +6,7 @@
 % Function takes number of frames and a cell containing the frames. 
 % Function returns a cell
 
-function [frame_contour] = fast_calc_contour(vid_frame_in)
+function [frame_contour] = calc_contour(vid_frame_in)
 
     % Assign matricies for each color type
     % Note: had to typecase as double, otherwise throws error

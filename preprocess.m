@@ -4,6 +4,8 @@
 % attitude determination. Input libraries are imported/created and processed here.
 %
 %
+clear;
+
 addpath(genpath('YAMLMatlab/'));
 config = ReadYaml('config.yaml');
 
@@ -11,19 +13,22 @@ close all; % Close any opened images
 
 tic
 
-% db = ModelStorage(config.DATABASE_ZIP);
+db = ModelStorage(config.DATABASE_ZIP); % Open priors database
 
-theta = (0:10:360);
-psi = (0:10:180);
-phi = (0);
+lib_images = fetch_images(db, '', '', ''); % Fetch all library images
 
-% lib_images = fetch_masks(db, '', '', '');
-% num_lib_images = size(lib_images);
-% lib_contours = calc_contour_gauss(num_lib_images, lib_images, config.FILTER_WIDTH);
+lib_contours = cellfun(@(x) calc_contour_gauss(x.image, config.FILTER_WIDTH), lib_images, 'UniformOutput', false); % Get contour of library images
 
+theta = cellfun(@(x) uint16(x.theta), lib_images); % Get the prior angle data for theta, psi, phi
+psi = cellfun(@(x) uint16(x.psi), lib_images);
+phi = cellfun(@(x) uint16(x.phi), lib_images);
 
-[num_lib_frames, lib_frames, frame_rate] = create_library_frames(config.VIDEO_FILE, config.LIB_SUBSET_SIZE); % Create library frames from input animation
-[lib_contour] = cellfun(@(x) calc_contour_gauss(x, config.FILTER_WIDTH), lib_frames, 'UniformOutput', false); % Get contour of library frames
+[rows, cols] = size(lib_images); % Get the dimensions of the cell arrays
+
+for i = 1:1:rows
+    db.insert_contour(theta(i), psi(i), phi(i), lib_contours{i}) % Insert contours into database
+end
+
 [num_frames, vid_frames] = create_input_frames(config.VIDEO_FILE, config.SIGMA); % Create input frames from input animation
 
 toc % Display code runtime

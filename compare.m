@@ -28,13 +28,13 @@
 % | and returns an inner product calculation for
 % | input comparison
 
-function [scores] = compare(model_masks, input_masks)
-    scores = cellfun(@(input) max_index(diff(model_masks, input)), input_masks);
+function [scores, indices] = compare(lib_contours, vid_contours)
+    [scores, indices] = cellfun(@(input) max_index(diff(lib_contours, input)), vid_contours, 'UniformOutput', false);
 end
 
-function [score] = diff(model_masks, input_mask)
-    score = cellfun(@(mask) mask(:)'*input_mask(:), model_masks);
-    % score = cellfun(@(mask) sum(xor(mask, input_mask), 'all'), model_masks);
+function [score] = diff(lib_contours, vid_contour)
+    score = cellfun(@(lib) double(lib.contour(:))'.*vid_contour(:), lib_contours, 'UniformOutput', false);
+    disp(class(score))
 end
 
 function [index] = max_index(a)

@@ -6,10 +6,12 @@
 
 tic
 
-% [vid_contour] = calc_contour(num_frames, vid_frames); % Get contour of input frames
+vid_contours = cellfun(@(x) calc_contour(x), vid_frames, 'UniformOutput', false); % Get contour of input frames
 
-[vid_contour] = cellfun(@(x) calc_contour(x), vid_frames, 'UniformOutput', false);
+lib_contours = fetch_contours(db, '', '', '');
 
-[scores] = compare(lib_contour, vid_contour); % Scores is 1xnum_frames list of lib_frame indicies best corresponding to frame
+send = {lib_contours{1:20}};
+
+[scores, indices] = compare(send, vid_contours); % Scores is 1xnum_frames list of lib_frame indicies best corresponding to frame
 
 toc

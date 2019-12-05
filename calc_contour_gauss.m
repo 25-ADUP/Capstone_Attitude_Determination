@@ -6,28 +6,20 @@
 % Function takes number of priors and a cell containing the priors. 
 % Function returns a cell
 
-function [lib_contour] = calc_contour_gauss(lib_frame_in, filter_width) % interate through each prior & perform mask
+function [lib_contour] = calc_contour_gauss(lib_image_in, filter_width) % interate through each prior & perform mask
     
-    % Assign matricies for each color type
+    % Assign matricies for library images
     % Note: had to typecase as double, otherwise throws error
-    R = double(lib_frame_in(:, :, 1));
-    G = double(lib_frame_in(:, :, 2));
-    B = double(lib_frame_in(:, :, 3));
+    lib_image = image_fit(lib_image_in);
+    I = double(lib_image(:, :, 1));
     
-    % Take gradient of each segmented color matrix
-    [Rx, Ry] = gradient(R);
-    [Gx, Gy] = gradient(G);
-    [Bx, By] = gradient(B);
+    % Take gradient of segmented matrix
+    [Ix, Iy] = gradient(I);
     
-    % Combine each directional color gradient for final contour
-    frame_contour = Rx.^2 + Ry.^2 + Gx.^2 + Gy.^2 + Bx.^2 + By.^2;
+    % Combine each directional gradient for final contour
+    frame_contour = Ix.^2 + Iy.^2;
     
     % Declare Gauss filter
-    % Note: second input modifies the width of filter
-%     gauss = fspecial('gaussian', filter_width, 1);
-    
-    % Convolve frame_contour with gauss filter to 'widen' our contour
-%     lib_contour{frame} = convn((convn(frame_contour', gauss, 'same'))', gauss, 'same');
     lib_contour = imgaussfilt(frame_contour, filter_width);
     
 end
