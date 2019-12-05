@@ -1,8 +1,8 @@
-FILTER_WIDTH: 5
+FILTER_WIDTH: 3
 LIB_SUBSET_SIZE: 2
 IMAGE_SIZE: 64
-VIDEO_FILE: "media/Cone1Animation.mp4"
+VIDEO_FILE: "Input_Video/Cone1_input_video.mp4"
 OUTPUT_FILE: "output/Reconstructed Video"
 SIGMA: 40
 DATABASE_ZIP: "cone.zip"
-NEW_LIB: true
+NEW_LIB: false

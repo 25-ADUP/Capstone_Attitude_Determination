@@ -6,7 +6,7 @@
 
 tic
 
-vid_contours = cellfun(@(x) calc_contour(x), vid_frames, 'UniformOutput', false); % Get contour of input frames
+vid_contours = cellfunprogress('Calculating contours...', @(x) calc_contour(x), vid_frames, 'UniformOutput', false); % Get contour of input frames
 
 lib_contours = fetch_contours(db, '', '', '');
 
