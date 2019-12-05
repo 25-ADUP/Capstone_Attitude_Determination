@@ -10,8 +10,6 @@ vid_contours = cellfun(@(x) calc_contour(x), vid_frames, 'UniformOutput', false)
 
 lib_contours = fetch_contours(db, '', '', '');
 
-send = {lib_contours{1:20}};
-
-[scores, indices] = compare(send, vid_contours); % Scores is 1xnum_frames list of lib_frame indicies best corresponding to frame
+scores = compare(lib_contours, vid_contours); % Scores is 1xnum_frames list of lib_frame indicies best corresponding to frame
 
 toc
