@@ -18,20 +18,21 @@ db = ModelStorage(config.DATABASE_ZIP); % Open priors database
 lib_images = fetch_images(db, '', '', ''); % Fetch all library images
 
 if config.NEW_LIB == true
-    lib_contours = cellfun(@(x) calc_contour_gauss(x.image, config.FILTER_WIDTH), lib_images, 'UniformOutput', false); % Get contour of library images if they do not already exist
+    lib_contours = cellfunprogress('Creating contours...', @(x) calc_contour_gauss(x.image, config.FILTER_WIDTH), lib_images, 'UniformOutput', false); % Get contour of library images if they do not already exist
     
     theta = cellfun(@(x) uint16(x.theta), lib_images); % Get the prior angle data for theta, psi, phi
     psi = cellfun(@(x) uint16(x.psi), lib_images);
     phi = cellfun(@(x) uint16(x.phi), lib_images);
 
     [num_lib_images, y] = size(lib_images); % Get the dimensions of the cell arrays
-
-    textprogressbar('Building Library -> ');
+    
+    bar = waitbar(0,'Building library...');
     for i = 1:1:num_lib_images
-        textprogressbar(i);
+        waitbar(i / num_lib_images, bar, 'Building library...');
         db.insert_contour(theta(i), psi(i), phi(i), lib_contours{i}) % Insert contours into database
     end
-    textprogressbar('Finished.');
+    close(bar);
+    disp('Finished.');
 else
     lib_contours = fetch_contours(db, '', '', ''); % Fetch contours if they already exist
 end

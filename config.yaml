@@ -5,4 +5,4 @@ VIDEO_FILE: "media/Cone1Animation.mp4"
 OUTPUT_FILE: "output/Reconstructed Video"
 SIGMA: 40
 DATABASE_ZIP: "cone.zip"
-NEW_LIB: false
+NEW_LIB: true
