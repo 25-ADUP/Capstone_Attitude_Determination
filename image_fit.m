@@ -1,7 +1,7 @@
 function [im_in] = image_fit(im_in_og)
     addpath(genpath('YAMLMatlab/'));
     config = ReadYaml('config.yaml');
-    [x_og, y_og, z_color] = size(im_in_og); % Orignial XY dimensions of input image
+    [x_og, y_og, ~] = size(im_in_og); % Orignial XY dimensions of input image
 
     image_size = config.IMAGE_SIZE; % Desired image dimension magnitude for X and Y
     x_factor = int16(x_og/image_size);

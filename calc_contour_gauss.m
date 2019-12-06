@@ -9,7 +9,7 @@
 function [lib_contour] = calc_contour_gauss(lib_image_in, filter_width) % interate through each prior & perform mask
     
     % Assign matricies for library images
-    % Note: had to typecase as double, otherwise throws error
+    % Note: had to typecast as double, otherwise throws error
     lib_image = image_fit(lib_image_in);
     I = double(lib_image(:, :, 1));
     

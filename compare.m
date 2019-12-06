@@ -28,15 +28,14 @@
 % | and returns an inner product calculation for
 % | input comparison
 
-function [scores, indices] = compare(lib_contours, vid_contours)
-    [scores, indices] = cellfun(@(input) max_index(diff(lib_contours, input)), vid_contours, 'UniformOutput', false);
+function [scores] = compare(lib_contours, vid_contours)
+    scores = cellfun(@(input) max_index(diff(lib_contours, input)), vid_contours, 'UniformOutput', false);
 end
 
-function [score] = diff(lib_contours, vid_contour)
-    score = cellfun(@(lib) double(lib.contour(:))'.*vid_contour(:), lib_contours, 'UniformOutput', false);
-    disp(class(score))
+function [scores] = diff(lib_contours, vid_contour)
+    scores = cellfun(@(frame) frame.contour(:)'*vid_contour(:), lib_contours, 'UniformOutput', false);
 end
 
 function [index] = max_index(a)
-    [~, index] = max(a);
+    [~, index] = max([a{:}]);  % comes in as cell, convert to array and max
 end
