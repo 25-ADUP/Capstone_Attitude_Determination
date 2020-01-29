@@ -133,6 +133,8 @@ classdef ModelStorage
         function query = build_query(column_name, varargin)
             % query = build_query(column, theta, psi, phi)
             % varargin assumed to hold {theta, psi, phi} or fewer
+            
+            % Make sure column is passed
             if nargin < 1
                 error('Please pass at least one argument.');
             end
