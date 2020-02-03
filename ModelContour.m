@@ -43,5 +43,8 @@ classdef ModelContour
         function tf = eq(A, B)
             tf = (A.theta == B.theta) && (A.psi == B.psi) && (A.phi == B.phi);
         end
+        function tf = lt(A, B)
+            tf = (A.theta < B.theta) && (A.psi < B.psi) && (A.phi < B.phi);
+        end
     end
 end

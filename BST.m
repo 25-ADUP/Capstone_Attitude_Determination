@@ -21,26 +21,37 @@
 % | SOFTWARE.
 % | ==============================================================================
 % |
-% | Module: ThetaNode
+% | Module: BST
 % |
 % | Description:
-% | Defines a class for a ContourBST theta node
+% | Defines a class for a generic BST
 
-classdef ThetaNode
+classdef BST
     properties
-        theta,
-        leftChild,
-        rightChild,
-        psiTree,
-        similars
+        root
     end
     methods ( Access = 'public' )
-        function obj = ThetaNode (angle)
-            obj.theta = angle;
-            obj.similars = {};
+        function obj = BST ()
+            obj.root = BSTNode();
         end
-        function addSimilar (node)
-            obj.similars{end+1} = node;
+        function tf = lt(obj1, obj2)
+            tf = obj1.data < obj2.data;
+        end
+    end
+    methods ( Static )
+        function node = max(A, B)
+            if (A > B)
+                node = A;
+            else
+                node = B;
+            end
+        end
+        function node = min(A, B)
+            if (A < B)
+                node = A;
+            else
+                node = B;
+            end
         end
     end
 end

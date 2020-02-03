@@ -21,26 +21,24 @@
 % | SOFTWARE.
 % | ==============================================================================
 % |
-% | Module: PhiNode
+% | Module: BSTNode
 % |
 % | Description:
-% | Defines a class for a ContourBST phi node
+% | Defines a class for a generic BST node
 
-classdef PhiNode
+classdef BSTNode
     properties
-        phi,
-        leftChild,
-        rightChild,
-        psiTree,
-        similars
+        data,
+        left,
+        right,
+        height
     end
     methods ( Access = 'public' )
-        function obj = PhiNode (angle)
-            obj.phi = angle;
-            obj.similars = {};
+        function obj = BSTNode (data)
+            obj.data = data;
         end
-        function addSimilar (node)
-            obj.similars{end+1} = node;
+        function tf = lt(obj1, obj2)
+            tf = obj1.data < obj2.data;
         end
     end
 end
