@@ -53,5 +53,13 @@ classdef BST
                 node = B;
             end
         end
+        function num = height(node)
+            if (isempty(node))
+                num = 0;
+            else
+                num = node.height;
+            end
+            
+        end
     end
 end

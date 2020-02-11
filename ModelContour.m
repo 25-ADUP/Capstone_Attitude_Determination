@@ -31,7 +31,8 @@ classdef ModelContour
         theta,
         psi,
         phi,
-        contour
+        contour,
+        similars
     end
     methods
         function obj = ModelContour(theta, psi, phi, contour)
@@ -39,12 +40,27 @@ classdef ModelContour
             obj.psi = psi;
             obj.phi = phi;
             obj.contour = contour;
+            obj.similars = [];
         end
         function tf = eq(A, B)
-            tf = (A.theta == B.theta) && (A.psi == B.psi) && (A.phi == B.phi);
+            if (isobject(B))
+                tf = (A.theta == B.theta) && (A.psi == B.psi) && (A.phi == B.phi);
+            else
+                tf = (A.theta == B(1)) && (A.psi == B(2)) && (A.phi == B(3));
+            end
         end
         function tf = lt(A, B)
-            tf = (A.theta < B.theta) && (A.psi < B.psi) && (A.phi < B.phi);
+            if (A.theta < B.theta) tf = true;
+            elseif (A.theta == B.theta)
+                if (A.psi < B.psi) tf = true;
+                elseif (A.psi == B.psi)
+                    if (A.phi < B.phi) tf = true;
+                    else tf = false;
+                    end
+                else tf = false;
+                end
+            else tf = false;
+            end
         end
     end
 end

@@ -40,5 +40,11 @@ classdef BSTNode
         function tf = lt(obj1, obj2)
             tf = obj1.data < obj2.data;
         end
+        function num = getHeight(node)
+            if (isempty(node))
+                num = 0;
+            end
+            return 
+        end
     end
 end
