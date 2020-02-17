@@ -80,5 +80,11 @@ classdef ModelContour
             else tf = false;
             end
         end
+        function tf = le(A, B)
+            tf = (A < B) || (A == B);
+        end
+        function tf = ge(A, B)
+            tf = (A > B) || (A == B);
+        end
     end
 end
