@@ -21,45 +21,23 @@
 % | SOFTWARE.
 % | ==============================================================================
 % |
-% | Module: BST
+% | Module: LibraryNode
 % |
 % | Description:
-% | Defines a class for a generic BST
+% | Defines a class for the contour library node
 
-classdef BST
+classdef LibraryNode
     properties
-        root
+        contour,
+        similars
     end
-    methods ( Access = 'public' )
-        function obj = BST ()
-            obj.root = BSTNode();
+    methods
+        function obj = LibraryNode (contour)
+            obj.contour = contour;
+            obj.similars = [];
         end
-        function tf = lt(obj1, obj2)
-            tf = obj1.data < obj2.data;
-        end
-    end
-    methods ( Static )
-        function node = max(A, B)
-            if (A > B)
-                node = A;
-            else
-                node = B;
-            end
-        end
-        function node = min(A, B)
-            if (A < B)
-                node = A;
-            else
-                node = B;
-            end
-        end
-        function num = height(node)
-            if (isempty(node))
-                num = 0;
-            else
-                num = node.height;
-            end
-            
+        function addSimilar (index)
+            obj.similars(end+1) = index;
         end
     end
 end

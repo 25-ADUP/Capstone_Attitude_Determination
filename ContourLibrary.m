@@ -21,30 +21,16 @@
 % | SOFTWARE.
 % | ==============================================================================
 % |
-% | Module: BSTNode
+% | Module: ContourLibrary
 % |
 % | Description:
-% | Defines a class for a generic BST node
+% | Defines a class for the contour library structure
 
-classdef BSTNode
+classdef ContourLibrary
     properties
-        data,
-        left,
-        right,
-        height
+        contours
     end
-    methods ( Access = 'public' )
-        function obj = BSTNode (data)
-            obj.data = data;
-        end
-        function tf = lt(obj1, obj2)
-            tf = obj1.data < obj2.data;
-        end
-        function num = getHeight(node)
-            if (isempty(node))
-                num = 0;
-            end
-            return 
-        end
+    methods ( Static )
+        
     end
 end

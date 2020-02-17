@@ -50,11 +50,29 @@ classdef ModelContour
             end
         end
         function tf = lt(A, B)
-            if (A.theta < B.theta) tf = true;
+            %A
+            %B
+            %tf = (A.theta == B.theta) && (A.psi == B.psi) && (A.phi == B.phi);
+            %if ~tf
+                if (A.theta < B.theta) tf = true;
+                elseif (A.theta == B.theta)
+                    if (A.psi < B.psi) tf = true;
+                    elseif (A.psi == B.psi)
+                        if (A.phi < B.phi) tf = true;
+                        else tf = false;
+                        end
+                    else tf = false;
+                    end
+                else tf = false;
+                end
+            %end
+        end
+        function tf = gt(A, B)
+            if (A.theta > B.theta) tf = true;
             elseif (A.theta == B.theta)
-                if (A.psi < B.psi) tf = true;
+                if (A.psi > B.psi) tf = true;
                 elseif (A.psi == B.psi)
-                    if (A.phi < B.phi) tf = true;
+                    if (A.phi > B.phi) tf = true;
                     else tf = false;
                     end
                 else tf = false;
