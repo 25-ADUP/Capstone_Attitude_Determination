@@ -30,7 +30,9 @@ classdef ContourLibrary
     properties
         contours
     end
-    methods ( Static )
-        
+    methods
+        function obj = ContourLibrary(contours)
+            obj.contours = quicksort(contours);
+        end
     end
 end

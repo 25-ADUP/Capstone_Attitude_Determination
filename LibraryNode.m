@@ -39,5 +39,14 @@ classdef LibraryNode
         function addSimilar (index)
             obj.similars(end+1) = index;
         end
+        function tf = eq(A, B)
+            tf = A.contour == B.contour;
+        end
+        function tf = lt(A, B)
+            tf = A.contour < B.contour;
+        end
+        function tf = gt(A, B)
+            tf = A.contour > B.contour;
+        end
     end
 end
