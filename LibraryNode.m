@@ -29,15 +29,18 @@
 classdef LibraryNode
     properties
         contour,
-        similars
+        similars,
+        iter_index
     end
     methods
-        function obj = LibraryNode (contour)
+        function obj = LibraryNode (contour, variance)
             obj.contour = contour;
-            obj.similars = [];
+            obj.similars = zeros(1, (2 * variance + 1)^3);
+            obj.iter_index = 1;
         end
         function addSimilar (index)
-            obj.similars(end+1) = index;
+            obj.similars(obj.iter_index) = index;
+            obj.iter_index = obj.iter_index + 1;
         end
         function tf = eq(A, B)
             tf = A.contour == B.contour;
