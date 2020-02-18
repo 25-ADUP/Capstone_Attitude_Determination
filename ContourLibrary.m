@@ -52,7 +52,8 @@ classdef ContourLibrary
             obj.step_size = step_size;
             obj.variance = variance;
             
-            
+            % Calculate similars
+            arrayfun(obj.findSimilars, obj.contours);
         end
         function findSimilars(node)
             % node : LibraryNode
