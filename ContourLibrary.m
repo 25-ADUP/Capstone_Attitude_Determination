@@ -52,6 +52,13 @@ classdef ContourLibrary
             obj.step_size = step_size;
             obj.variance = variance;
             
+            if obj.y_steps == 0
+                obj.y_steps = 1;
+            end
+            if obj.z_steps == 0
+                obj.z_steps = 1;
+            end
+            
             % Calculate similars
             arrayfun(obj.findSimilars, obj.contours);
         end
