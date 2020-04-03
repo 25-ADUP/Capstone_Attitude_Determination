@@ -42,7 +42,7 @@ class ModelStorage:
 
         self.connection = sqlite3.connect('priors.db')
         self.cursor = self.connection.cursor()
-        print('Database connected.')
+        # print('Database connected.')
 
         if drop_old:
             self.cursor.execute('drop table if exists angles')
@@ -103,11 +103,12 @@ class ModelStorage:
         """
         self.connection.commit()
         self.connection.close()
+        
+    def get_length(self):
+        return self.cursor.execute("SELECT COUNT(theta) FROM angles").fetchone()[0]
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        number = self.cursor.execute("SELECT COUNT(theta) FROM angles").fetchone()[0]
-        print('\nDatabase closing with {} angles'.format(number))
         self.save()
