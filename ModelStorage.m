@@ -41,22 +41,32 @@ classdef ModelStorage
             % Assumes model zip file is in ./model
             % Example: db = ModelStorage('priors.zip')
             
-            try
-                rmdir('./working_model', 's');  % Remove working model
-            catch E
-            end
+            %try
+            %    rmdir('./working_model', 's');  % Remove working model
+            %catch E
+            %end
             
             obj.db_zip = database_zip;
             
-            disp('Loading model...');
-            
-            % Make new dir
-            mkdir('working_model');
-            mkdir('./working_model/contours'); % Make sure contours dir exists
-            
-            % Set up working dir, not intended for git
-            unzip(sprintf('./model/%s', database_zip), './working_model');
-            disp('Set up working model.');
+            if ~exist('working_model', 'dir')
+                disp('Loading model...');
+                
+                %try
+                %    rmdir('./working_model', 's');  % Remove working model
+                %catch E
+                %end
+
+                % Make new dir
+                mkdir('working_model');
+                mkdir('./working_model/contours'); % Make sure contours dir exists
+
+                sys_cmd_unzip = @(z,d) sprintf('"C:\\Program Files\\7-Zip\\7z.exe" x -bsp1 -y -o"%s" "%s" *', d, z);
+
+                % Set up working dir, not intended for git
+                %unzip(sprintf('./model/%s', database_zip), './working_model');
+                system(sys_cmd_unzip(sprintf('.\\model\\%s', database_zip), '.\\working_model'));
+                disp('Set up working model.');
+            end
             
             % Connect to database
             obj.conn = sqlite('./working_model/priors.db');
@@ -128,6 +138,16 @@ classdef ModelStorage
             % Save
             % exec(obj.conn, 'commit');
         end
+        function save()
+            disp('Saving model...');
+            
+            sys_cmd_zip = @(d, s) sprintf('"C:\\Program Files\\7-Zip\\7z.exe" a -y -sdel -tzip "%s" "%s\\*"', d, s);
+            
+            
+            % Zip it up all pretty
+            system(sys_cmd_zip(sprintf('.\\model\\%s.zip', obj.db_zip), '.\\working_model'));
+            disp('Saved as zip.');
+        end
     end
     methods ( Static, Access = 'public')
         function query = build_query(column_name, varargin)
@@ -170,20 +190,11 @@ classdef ModelStorage
         function obj = delete(obj)
             % Class destructor
             
-            disp('Saving model...');
+            disp('Closing...');
             
             % Close database
             close(obj.conn);
             disp('Closed connection.');
-            
-            % Zip it up all pretty
-            zip(sprintf('./model/%s', obj.db_zip), {'masks', 'contours', 'priors.db'}, './working_model');
-            disp('Saved as zip.');
-            
-            try
-                rmdir('./working_model', 's');  % Remove working model
-            catch E
-            end
         end
     end
 end

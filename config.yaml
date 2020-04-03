@@ -5,5 +5,5 @@ VIDEO_FILE: "Input_Video/Cone1_input_video.mp4"
 OUTPUT_FILE: "output/Reconstructed Video"
 TRUE_ANGLES: ""
 SIGMA: 40
-DATABASE_ZIP: "cone.zip"
-NEW_LIB: true
+DATABASE_ZIP: "dragon.zip"
+NEW_LIB: false

@@ -13,12 +13,12 @@ close all; % Close any opened images
 
 tic
 
-db = ModelStorage(config.DATABASE_ZIP); % Open priors database
+c % Open priors database
 
 if config.NEW_LIB == true
     lib_images = fetch_images(db, '', '', ''); % Fetch all library images
     
-    lib_contours = cellfunprogress('Creating contours...', @(x) calc_contour_gauss(imcrop(x.image, [128, 128, 255, 255]), config.FILTER_WIDTH), lib_images, 'UniformOutput', false); % Get contour of library images if they do not already exist
+    lib_contours = cellfunprogress('Creating contours...', @(x) calc_contour_gauss(x.image, config.FILTER_WIDTH), lib_images, 'UniformOutput', false); % Get contour of library images if they do not already exist
     
     theta = cellfun(@(x) uint16(x.theta), lib_images); % Get the prior angle data for theta, psi, phi
     psi = cellfun(@(x) uint16(x.psi), lib_images);

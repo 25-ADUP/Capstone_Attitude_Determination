@@ -32,7 +32,8 @@ classdef ModelContour
         psi,
         phi,
         contour,
-        similars
+        similars,
+        hash
     end
     methods
         function obj = ModelContour(theta, psi, phi, contour)
@@ -41,6 +42,7 @@ classdef ModelContour
             obj.phi = phi;
             obj.contour = contour;
             obj.similars = [];
+            obj.hash = str2num(strcat('1', num2str(theta, '%03.f'), num2str(psi, '%03.f'), num2str(phi, '%03.f')));
         end
         function tf = eq(A, B)
             if (isobject(B))
