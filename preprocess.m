@@ -34,8 +34,11 @@ if config.NEW_LIB == true
     close(bar);
     disp('Finished.');
 else
+    disp('Fetching contours...');
     lib_contours = db.fetch_contours('', '', ''); % Fetch contours if they already exist
 end
+
+library = ContourLibrary(lib_contours, 360, 360, 360, 10, 3);
 
 [num_frames, vid_frames, frame_rate] = create_input_frames(config.VIDEO_FILE, config.SIGMA); % Create input frames from input animation
 
