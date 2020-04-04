@@ -37,11 +37,14 @@ classdef LibraryNode
         function obj = LibraryNode (contour, variance)
             obj.contour = contour;
             obj.hash = contour.hash;
-            obj.similars = [];%zeros(1, (2 * variance + 1)^3);
+            obj.similars = zeros(1, (2 * variance + 1)^3);
             obj.iter_index = 1;
         end
         function obj = addSimilar (obj, index)
-            obj.similars(end+1) = index;
+            obj.similars(obj.iter_index) = index;
+            %fprintf('I just added a similar!!!!');
+            obj.iter_index = obj.iter_index + 1;
+            %fprintf('I just added to index!!!!');
         end
         function tf = eq(A, B)
             tf = A.contour == B.contour;

@@ -55,13 +55,13 @@ classdef ContourLibrary
             bar = waitbar(0, 'Building nodes...');
             for i=1:length(contour_array)
                 contour = contour_array(i);
-                nodes(i) = LibraryNode(contour, variance);
+                nodes(i) = LibraryNode(contour, variance);  % This line seems to work fine
                 %fprintf('Node %d\n', i);
                 waitbar(i / length(contour_array), bar, 'Building nodes...');
             end
             close(bar);
             fprintf('Sorting nodes...\n');
-            [~, ind] = sort([nodes.hash]);
+            [~, ind] = sort([nodes.hash]);  % This line also seems to work fine
             obj.contours = nodes(ind);
             obj.x_min, obj.x_max = x_max;
             obj.y_max = y_max;
@@ -79,16 +79,16 @@ classdef ContourLibrary
             end
             
             % Calculate similars
-            fprintf('Calculating similars...');
+            fprintf('Calculating similars...\n');
             %arrayfun(obj.findSimilars, obj.contours);
             bar = waitbar(0, 'Calculating similars...');
             for i = 1 : length(obj.contours)
-                obj.findSimilars(obj.contours(i));
+                obj.contours(i) = obj.findSimilars(obj.contours(i));
                 waitbar(i / length(obj.contours), bar, 'Calculating similars...');
             end
             close(bar);
         end
-        function findSimilars(obj, node)
+        function newNode = findSimilars(obj, node)
             % node : LibraryNode
             theta = node.contour.theta;
             psi = node.contour.psi;
@@ -105,11 +105,12 @@ classdef ContourLibrary
                         z_norm = mod(z + obj.z_max, obj.z_max);
                         
                         index = obj.indexOf(x_norm, y_norm, z_norm);
-                        node.similars(end+1) = index;
+                        node = node.addSimilar(index);
                         %node.similars
                     end
                 end
             end
+            newNode = node;
         end
         function contour = getIndex(obj, index)
             contour = obj.contours(index);
@@ -121,6 +122,7 @@ classdef ContourLibrary
             norm_psi = psi / obj.step_size;
             norm_phi = phi / obj.step_size;
             
+            % had to add another +1 for phi to be right
             index = norm_theta * obj.y_steps * obj.z_steps + norm_psi * obj.z_steps + norm_phi + 1;
         end
         function bind(obj, theta, psi, phi)
@@ -142,7 +144,7 @@ classdef ContourLibrary
             %similars = arrayfun(@(sim_index) obj.contours(sim_index), found.similars);
             similars = ModelContour.empty(0, length(found.similars));
             for i = 1 : length(found.similars)
-                node = obj.contours(i);
+                node = obj.contours(found.similars(i));
                 similars(i) = node.contour;
             end
         end
