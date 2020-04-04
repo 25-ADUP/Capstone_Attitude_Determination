@@ -13,7 +13,7 @@ close all; % Close any opened images
 
 tic
 
-c % Open priors database
+db = ModelStorage(config.DATABASE_ZIP); % Open priors database
 
 if config.NEW_LIB == true
     lib_images = fetch_images(db, '', '', ''); % Fetch all library images
