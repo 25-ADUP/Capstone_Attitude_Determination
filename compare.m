@@ -28,12 +28,12 @@
 % | and returns an inner product calculation for
 % | input comparison
 
-function [scores] = compare(lib_contours, vid_contours)
-    scores = cellfun(@(input) max_index(diff(lib_contours, input)), vid_contours, 'UniformOutput', false);
+function [scores] = compare(epsilon_lib_contours, vid_contours)
+    scores = cellfun(@(input) max_index(diff(epsilon_lib_contours, input)), vid_contours, 'UniformOutput', false);
 end
 
-function [scores] = diff(lib_contours, vid_contour)
-    scores = cellfun(@(frame) frame.contour(:)'*vid_contour(:), lib_contours, 'UniformOutput', false);
+function [scores] = diff(epsilon_lib_contours, vid_contour)
+    scores = cellfun(@(frame) frame.contour(:)'*vid_contour(:), epsilon_lib_contours, 'UniformOutput', false);
 end
 
 function [index] = max_index(a)
