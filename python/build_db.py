@@ -122,23 +122,23 @@ def build_contours(file_names: list,
             match = re.match(r'M(.*)_(.*)_(.*).png', filename)
             theta, psi, phi = match.group(1), match.group(2), match.group(3)
 
-            im = imageio.imread('./working_model/masks/{}'.format(filename))
+            im = imageio.imread('../working_model/masks/{}'.format(filename))
             im = np.float32(im)
             contour = calc_contour_gauss(im, 2)
             contour = 255 * (contour - np.min(contour)) / np.ptp(contour).astype(int)
 
             new_filename = 'C{}_{}_{}.png'.format(theta, psi, phi)
-            imageio.imwrite('./working_model/contours/{}'.format(new_filename), np.uint8(contour))
+            imageio.imwrite('../working_model/contours/{}'.format(new_filename), np.uint8(contour))
 
             # insert into database
-            try:
-                write_lock.acquire()
-                db.insert(theta, psi, phi, new_filename)
-            finally:
-                try:
-                    write_lock.release()
-                except:
-                    pass
+            # try:
+            #     write_lock.acquire()
+            #     db.insert(theta, psi, phi, new_filename)
+            # finally:
+            #     try:
+            #         write_lock.release()
+            #     except:
+            #         pass
 
             try:
                 print_lock.acquire(True, 3)
@@ -164,7 +164,7 @@ def partition(array, num):
 if __name__ == '__main__':
 
     if calc_contours:
-        file_list = os.listdir('./working_model/masks')
+        file_list = os.listdir('../working_model/masks')
         file_num = len(file_list)
 
         counter = Value('i', 0)

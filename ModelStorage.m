@@ -138,15 +138,20 @@ classdef ModelStorage
             % Save
             % exec(obj.conn, 'commit');
         end
-        function save()
+        function obj = save(obj)
             disp('Saving model...');
             
-            sys_cmd_zip = @(d, s) sprintf('"C:\\Program Files\\7-Zip\\7z.exe" a -y -sdel -tzip "%s" "%s\\*"', d, s);
+            sys_cmd_zip = @(d, s) sprintf('"C:\\Program Files\\7-Zip\\7z.exe" a -y -tzip "%s" ".\\%s\\*"', d, s);
             
+            % Temp disconnect from priors.db
+            close(obj.conn);
             
             % Zip it up all pretty
-            system(sys_cmd_zip(sprintf('.\\model\\%s.zip', obj.db_zip), '.\\working_model'));
+            system(sys_cmd_zip(sprintf('.\\model\\%s', obj.db_zip), 'working_model'));
             disp('Saved as zip.');
+            
+            % Reconnect to database
+            obj.conn = sqlite('./working_model/priors.db');
         end
     end
     methods ( Static, Access = 'public')

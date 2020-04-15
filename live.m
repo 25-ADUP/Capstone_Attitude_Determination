@@ -10,20 +10,22 @@ estimated_attitudes = ModelContour.empty(0,length(vid_frames)-1); % Array to hol
 
 vid_contours = cellfunprogress('Calculating video contours...', @(x) calc_contour(x), vid_frames, 'UniformOutput', false); % Get contour of input frames
 
-vf_dummy = vid_frames(2);
-figure;
-imagesc([vf_dummy{:}])
-vc_dummy = vid_contours(2);
-figure;
-imagesc([vc_dummy{:}])
+% Debugging methods
+%vf_dummy = vid_frames(2);
+%figure;
+%imagesc([vf_dummy{:}])
+%vc_dummy = vid_contours(2);
+%figure;
+%imagesc([vc_dummy{:}])
 
 first_index = compare(lib_contours, vid_contours(2)); % Get first contour & run whole library against it
 first_contour = lib_contours{first_index{1}};
 estimated_attitudes(1) = first_contour;
 
-figure;
-imagesc(lib_contours{first_index{1}}.contour);
-disp(lib_contours{first_index{1}});
+% More debugging
+%figure;
+%imagesc(lib_contours{first_index{1}}.contour);
+%disp(lib_contours{first_index{1}});
 
 [~, previous_similars] = library.get(first_contour.theta, first_contour.psi, first_contour.phi);
 first_similars = previous_similars;
