@@ -17,9 +17,9 @@ output_vid.FrameRate = frame_rate;
 output_vid.Quality = 100;
 open(output_vid);
 
-for i = 1:1:num_frames
-    index = estimated_attitudes(i);
-    im_cell = fetch_images(db, lib_contours{index}.theta, lib_contours{index}.psi, lib_contours{index}.phi); % Fetch all library images
+for i = 1:1:num_frames-1
+    contour = estimated_attitudes(i);  % type: ModelContour
+    im_cell = db.fetch_images(contour.theta, contour.psi, contour.phi); % Fetch each library image
     I = mat2gray(im_cell{1}.image);
     imagesc(I);
     writeVideo(output_vid, I);

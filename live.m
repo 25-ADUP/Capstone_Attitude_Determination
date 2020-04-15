@@ -6,18 +6,40 @@
 
 tic
 
-estimated_attitudes = zeros(1, num_frames); % Array to hold ints of estimated library frame index
+estimated_attitudes = ModelContour.empty(0,length(vid_frames)-1); % Array to hold contours of estimated library frame index
 
 vid_contours = cellfunprogress('Calculating video contours...', @(x) calc_contour(x), vid_frames, 'UniformOutput', false); % Get contour of input frames
 
-first_score = compare(lib_contours, vid_contours(1)); % Get first contour & run whole library against it
-estimated_attitudes(1) = first_score{1}; 
-[prec_contours, previous_similars] = library.get(lib_contours{first_score{1}}.theta, lib_contours{first_score{1}}.phi, lib_contours{first_score{1}}.psi);
+vf_dummy = vid_frames(2);
+figure;
+imagesc([vf_dummy{:}])
+vc_dummy = vid_contours(2);
+figure;
+imagesc([vc_dummy{:}])
 
-for i = 2:1:num_frames % Use similars to narrow estimated attitude search & calculation
-    next_score = compare(num2cell(previous_similars), vid_contours(i)); % Sending in similars as a cell array
-    estimated_attitudes(i) = next_score{1};
-    [prec_contours, previous_similars] = library.get(lib_contours{next_score{1}}.theta, lib_contours{next_score{1}}.psi, lib_contours{next_score{1}}.phi);
+first_index = compare(lib_contours, vid_contours(2)); % Get first contour & run whole library against it
+first_contour = lib_contours{first_index{1}};
+estimated_attitudes(1) = first_contour;
+
+figure;
+imagesc(lib_contours{first_index{1}}.contour);
+disp(lib_contours{first_index{1}});
+
+[~, previous_similars] = library.get(first_contour.theta, first_contour.psi, first_contour.phi);
+first_similars = previous_similars;
+
+for i = 3:1:num_frames % Use similars to narrow estimated attitude search & calculation
+    
+    % next_index here is the index of previous_similars, *not* lib_contours
+    next_index = compare(num2cell(previous_similars), vid_contours(i)); % Sending in similars as a cell array
+    
+    % The contour assiociated with next_score
+    next_contour = previous_similars(next_index{1});
+    
+    % Add contour to estimated
+    estimated_attitudes(i-1) = next_contour;
+    
+    [~, previous_similars] = library.get(next_contour.theta, next_contour.psi, next_contour.phi);
 end
 
 toc
