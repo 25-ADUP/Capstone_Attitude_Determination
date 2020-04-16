@@ -33,13 +33,11 @@ from typing import Union
 
 
 class ModelStorage:
-    def __init__(self, drop_old=False, use_blobs=True):
+    def __init__(self, drop_old=False):
         """
         Initialize the DB.
         :param drop_old: Set to True if making new DB
         """
-        self.use_blobs = use_blobs
-
         self.connection = sqlite3.connect('priors.db')
         self.cursor = self.connection.cursor()
         # print('Database connected.')
@@ -54,27 +52,35 @@ class ModelStorage:
                 theta real not null,
                 psi real not null,
                 phi real not null,
-                image {0},
-                contour {0},
+                image text,
+                contour text,
                 primary key (theta, psi, phi)
             );
-            """.format('blob' if use_blobs else 'text')
+            """
         )
 
-    def insert(self, theta, psi, phi, imagefile: Union[str, io.BytesIO]):
+    def insert_image(self, theta, psi, phi, imagefile: str):
         """
-        Insert an angle mask
+        Insert an angle image
         :param theta: angle corresponding to X
         :param psi: angle corresponding to Y
         :param phi: angle corresponding to Z
-        :param imagefile: str filename or file-like object with png image
+        :param imagefile: str filename
         """
-        if self.use_blobs:
-            self.cursor.execute('insert into angles (theta, psi, phi, image) values (?,?,?,?)',
-                                (theta, psi, phi, sqlite3.Binary(imagefile.getvalue())))
-        else:
-            self.cursor.execute('insert into angles (theta, psi, phi, image) values (?,?,?,?)',
-                                (theta, psi, phi, imagefile))
+        self.cursor.execute('insert into angles (theta, psi, phi, image) values (?,?,?,?)',
+                            (theta, psi, phi, imagefile))
+        self.connection.commit()
+
+    def insert_contour(self, theta, psi, phi, contour_file: str):
+        """
+        Insert an angle contour
+        :param theta: angle corresponding to X
+        :param psi: angle corresponding to Y
+        :param phi: angle corresponding to Z
+        :param contour_file: str filename
+        """
+        self.cursor.execute('update angles set contour=? where theta=? and psi=? and phi=?',
+                            (contour_file, theta, psi, phi))
         self.connection.commit()
 
     def request(self, theta=None, psi=None, phi=None) -> list:

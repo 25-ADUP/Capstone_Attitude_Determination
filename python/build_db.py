@@ -38,25 +38,7 @@ import numpy as np
 from modelstorage import ModelStorage
 from multiprocessing import Process, Value, Lock, Queue
 from processing import calc_contour_gauss
-
-
-calc_contours = True
-
-
-def percentage(iter: int, total: int):
-    """
-    A handy percent bar for visualization
-    :param iter: number you're on
-    :param total: total number of iterations
-    :return: None
-    """
-    # percentage of 20 bars
-    num = int((iter / total) * 20) + 1
-
-    # carriage return, loading bar, write
-    sys.stdout.write('\r')
-    sys.stdout.write("[%-20s] %d%% (#%d)" % ('=' * num, int(iter / total * 100), iter))
-    sys.stdout.flush()
+from tools import percentage
         
 
 def convert_masks(file_names: list,
@@ -64,13 +46,12 @@ def convert_masks(file_names: list,
                   file_counter: Value,
                   file_prefix: str,
                   images_folder: str,
-                  use_blobs: bool,
                   crop_frame: tuple,
                   target_dimension: tuple,
                   print_lock: Lock,
                   write_lock: Lock):
                   
-    with ModelStorage(drop_old=False, use_blobs=use_blobs) as db:
+    with ModelStorage(drop_old=False) as db:
         for i, filename in enumerate(file_names):
 
             # extract angles from filename using regex, aka black magic
@@ -81,19 +62,14 @@ def convert_masks(file_names: list,
             image = Image.open('./{}/{}'.format(images_folder, filename))
             image = image.crop(crop_frame).resize(target_dimension).convert('L')
 
-            if use_blobs:
-                # save image to `file_obj` as binary object
-                file_obj = io.BytesIO()
-                image.save(file_obj, format='PNG')
-            else:
-                # set `file_obj` to image file name and save image into ./masks/
-                file_obj = 'M{}_{}_{}.png'.format(theta, psi, phi)
-                image.save('./masks/{}'.format(file_obj), format='PNG')
+            # set `file_obj` to image file name and save image into ./masks/
+            file_obj = 'M{}_{}_{}.png'.format(theta, psi, phi)
+            image.save('./masks/{}'.format(file_obj), format='PNG')
 
             # insert into database
             try:
                 write_lock.acquire()
-                db.insert(theta, psi, phi, file_obj)
+                db.insert_image(theta, psi, phi, file_obj)
             finally:
                 try:
                     write_lock.release()
@@ -117,28 +93,28 @@ def build_contours(file_names: list,
                    file_counter: Value,
                    print_lock: Lock,
                    write_lock: Lock):
-    with ModelStorage(drop_old=False, use_blobs=False) as db:
+    with ModelStorage(drop_old=False) as db:
         for filename in file_names:
             match = re.match(r'M(.*)_(.*)_(.*).png', filename)
             theta, psi, phi = match.group(1), match.group(2), match.group(3)
 
-            im = imageio.imread('../working_model/masks/{}'.format(filename))
+            im = imageio.imread('./masks/{}'.format(filename))
             im = np.float32(im)
             contour = calc_contour_gauss(im, 2)
             contour = 255 * (contour - np.min(contour)) / np.ptp(contour).astype(int)
 
             new_filename = 'C{}_{}_{}.png'.format(theta, psi, phi)
-            imageio.imwrite('../working_model/contours/{}'.format(new_filename), np.uint8(contour))
+            imageio.imwrite('./contours/{}'.format(new_filename), np.uint8(contour))
 
             # insert into database
-            # try:
-            #     write_lock.acquire()
-            #     db.insert(theta, psi, phi, new_filename)
-            # finally:
-            #     try:
-            #         write_lock.release()
-            #     except:
-            #         pass
+            try:
+                write_lock.acquire()
+                db.insert_contour(theta, psi, phi, new_filename)
+            finally:
+                try:
+                    write_lock.release()
+                except:
+                    pass
 
             try:
                 print_lock.acquire(True, 3)
@@ -153,6 +129,7 @@ def build_contours(file_names: list,
 
             
 def partition(array, num):
+    """Simple array partitioning generator"""
     start = 0
     iteration = 1
     while start < len(array):
@@ -163,8 +140,10 @@ def partition(array, num):
 
 if __name__ == '__main__':
 
+    calc_contours = sys.argv[1] == 'contours' or False
+
     if calc_contours:
-        file_list = os.listdir('../working_model/masks')
+        file_list = os.listdir('./masks')
         file_num = len(file_list)
 
         counter = Value('i', 0)
@@ -174,25 +153,28 @@ if __name__ == '__main__':
 
         process_num = 16
 
+        if not os.path.exists('./contours'):
+            os.makedirs('./contours')
+
         print('Building contours with {} processes...\n'.format(process_num))
         time_start = time.time()
 
         processes = [Process(target=build_contours, args=(part,
-                                                         file_num,
-                                                         counter,
-                                                         percent_lock,
-                                                         write_lock)) for part in partition(file_list, process_num)]
+                                                          file_num,
+                                                          counter,
+                                                          percent_lock,
+                                                          write_lock))
+                     for part in partition(file_list, process_num)]
 
         for p in processes:
             p.start()
 
         processes[-1].join()
-        print('Contour processing took {} seconds'.format(time.time() - time_start))
+        print('\nContour processing took {} seconds'.format(time.time() - time_start))
 
     else:
-        images_folder = sys.argv[1]
-        file_prefix = sys.argv[2]
-        use_blobs = True if sys.argv[3].lower() in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh'] else False
+        images_folder = sys.argv[2]
+        file_prefix = sys.argv[3]
         input_width = 512
         input_height = 512
         target_dimension = (64, 64)
@@ -213,11 +195,10 @@ if __name__ == '__main__':
         file_list = os.listdir('./{}'.format(images_folder))
         file_num = len(file_list)
 
-        process_num = 20
+        process_num = 16
 
-        if not use_blobs:
-            if not os.path.exists('./masks'):
-                os.makedirs('./masks')
+        if not os.path.exists('./masks'):
+            os.makedirs('./masks')
 
         print('Building database with {} processes...\n'.format(process_num))
         time_start = time.time()
@@ -227,7 +208,6 @@ if __name__ == '__main__':
                                                          counter,
                                                          file_prefix,
                                                          images_folder,
-                                                         use_blobs,
                                                          crop_frame,
                                                          target_dimension,
                                                          percent_lock,
@@ -238,8 +218,8 @@ if __name__ == '__main__':
 
         processes[-1].join()
         time.sleep(3)
-        with ModelStorage(drop_old=False, use_blobs=use_blobs) as db:
+        with ModelStorage(drop_old=False) as db:
             num = db.get_length()
             print('\nDB created from {} frames, closing with {} frames'.format(file_num, num))
             print('Processing took {} seconds'.format(time.time() - time_start))
-    
+
