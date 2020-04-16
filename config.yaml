@@ -1,9 +1,9 @@
-FILTER_WIDTH: 3
+FILTER_WIDTH: 0.001
 LIB_SUBSET_SIZE: 2
-IMAGE_SIZE: 64
-VIDEO_FILE: "Input_Video/Dragon1_input_2deg.mp4"
-OUTPUT_FILE: "output/Reconstructed Video"
+IMAGE_SIZE: 128
+VIDEO_FILE: "Input_Video/TridentII_D5_input_1_noise.mp4"
+OUTPUT_FILE: "output/Reconstructed_Video_Missile"
 TRUE_ANGLES: ""
 SIGMA: 40
-DATABASE_ZIP: "dragon.zip"
+DATABASE_ZIP: "missile.zip"
 NEW_LIB: false

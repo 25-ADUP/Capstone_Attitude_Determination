@@ -10,6 +10,6 @@ function cell = cellfunprogress (message, varargin)
     function result = innerfun(item)
         result = varargin{1}(item);
         count = count + 1;
-        waitbar(count / max, bar, sprintf('%s %d% (#%d)', message, round(count / max), count));
+        waitbar(count / max, bar, sprintf('%s %d%% (#%d)', message, round((count / max) * 100), count));
     end
 end
